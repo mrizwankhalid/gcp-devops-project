@@ -24,7 +24,7 @@ pip3 install -r requirements.txt
 python3 -m flask --app app run
 ```
 
-The app will be available at http://127.0.0.1:5000.
+The app will be available at http://127.0.0.1:5001.
 
 ## Run with Docker
 
