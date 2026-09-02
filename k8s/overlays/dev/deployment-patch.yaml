@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gcpdevops-app
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+        - name: gcpdevops
+          env:
+            - name: APP_ENV
+              value: dev
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 100m
+              memory: 128Mi

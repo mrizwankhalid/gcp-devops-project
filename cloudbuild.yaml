@@ -19,16 +19,17 @@ steps:
       - '--project'
       - '$PROJECT_ID'
 
-  # Apply the Kubernetes manifests (Deployment, Service, HPA, PDB)
+  # Apply the Kubernetes manifests for the target environment (dev/stage/prod),
+  # each an overlay of k8s/base built with kustomize
   - name: 'gcr.io/cloud-builders/kubectl'
-    args: ['apply', '-f', 'k8s/']
+    args: ['apply', '-k', 'k8s/overlays/${_ENV}']
     env:
       - 'CLOUDSDK_COMPUTE_ZONE=${_CLUSTER_ZONE}'
       - 'CLOUDSDK_CONTAINER_CLUSTER=${_CLUSTER_NAME}'
 
-  # Point the deployment at the image just built
+  # Point the deployment at the image just built (namespace == environment name)
   - name: 'gcr.io/cloud-builders/kubectl'
-    args: ['set', 'image', 'deployment/gcpdevops-app', 'gcpdevops=gcr.io/$PROJECT_ID/gcpdevops:$SHORT_SHA']
+    args: ['set', 'image', 'deployment/gcpdevops-app', 'gcpdevops=gcr.io/$PROJECT_ID/gcpdevops:$SHORT_SHA', '-n', '${_ENV}']
     env:
       - 'CLOUDSDK_COMPUTE_ZONE=${_CLUSTER_ZONE}'
       - 'CLOUDSDK_CONTAINER_CLUSTER=${_CLUSTER_NAME}'
@@ -37,8 +38,9 @@ steps:
 images:
   - 'gcr.io/$PROJECT_ID/gcpdevops:$SHORT_SHA'
 
-# Default values for the GKE cluster the app is deployed to.
-# Override with --substitutions=_CLUSTER_NAME=...,_CLUSTER_ZONE=... or in the trigger config.
+# Defaults for which environment/cluster to deploy to.
+# Override with --substitutions=_ENV=stage,_CLUSTER_NAME=...,_CLUSTER_ZONE=... or per-trigger config.
 substitutions:
+  _ENV: dev
   _CLUSTER_NAME: your-gke-cluster
   _CLUSTER_ZONE: us-central1-a
