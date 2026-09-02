@@ -1,0 +1,6 @@
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: gcpdevops-app-hpa
+spec:
+  maxReplicas: 3
