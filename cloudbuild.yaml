@@ -19,9 +19,9 @@ steps:
       - '--project'
       - '$PROJECT_ID'
 
-  # Apply the Kubernetes manifest (Deployment + Service)
+  # Apply the Kubernetes manifests (Deployment, Service, HPA, PDB)
   - name: 'gcr.io/cloud-builders/kubectl'
-    args: ['apply', '-f', '../gke.yaml']
+    args: ['apply', '-f', 'k8s/']
     env:
       - 'CLOUDSDK_COMPUTE_ZONE=${_CLUSTER_ZONE}'
       - 'CLOUDSDK_CONTAINER_CLUSTER=${_CLUSTER_NAME}'
